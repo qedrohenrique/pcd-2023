@@ -17,8 +17,8 @@ int main (int argc, char **argv){
 
     // COLUMNS
     for(int i = 0; i < GRID_SIZE; i++){
-		grid[i] = (float*) calloc(GRID_SIZE , sizeof(float));
-		new_grid[i] = (float*) calloc(GRID_SIZE , sizeof(float));
+		grid[i] = (float*) malloc(GRID_SIZE * sizeof(float));
+		new_grid[i] = (float*) malloc(GRID_SIZE * sizeof(float));
 	}
 
     //GLIDER
@@ -36,7 +36,10 @@ int main (int argc, char **argv){
 	grid[lin+1][col+1] = 1;
 	grid[lin+2][col+1] = 1;
 
-    print_grid(grid);
+    print_grid_win(grid);
+	printf("\n");
+	printf("%d\n", getNeighbors(grid, 2, 2));
+	printf("%d\n", countAliveCells(grid));
 
     return 0;
 }

@@ -1,26 +1,59 @@
-#define GRID_SIZE 48
+#include "funcs.h"
 
-typedef struct {
-    int ** grid;
-    int ** new_grid;
-} thread_args_t;
-
-void print_grid(int** grid_ptr){
+void print_grid_win(int** grid){
 	for(int i = 0; i < GRID_SIZE; i++){
 		for(int j = 0; j < GRID_SIZE; j++){
-			if(grid_ptr[i][j]==1){printf("1 ");}
-			else{printf("0 ");}
+			if(grid[i][j]==1) printf("1 ");
+			else printf("0 ");
 		}
-		printf(L"\n");
+		printf("\n");
 	}
 }
 
-void print_grid_unix(int** grid_ptr){
+void print_grid_unix(int** grid){
 	for(int i = 0; i < GRID_SIZE; i++){
 		for(int j = 0; j < GRID_SIZE; j++){
-			if(grid_ptr[i][j]==1){wprintf(L"%lc ", 0x25A0);}
+			if(grid[i][j]==1){wprintf(L"%lc ", 0x25A0);}
 			else{wprintf(L"%lc ", 0x25A1);}
 		}
 		wprintf(L"\n");
 	}
+}
+
+int getNeighbors(int** grid, int i, int j){ 
+	int neighborsAlive=0;
+
+	int right = (i + 1) % GRID_SIZE;
+	int left = (i - 1 + GRID_SIZE) % GRID_SIZE;
+	int bottom = (j - 1 + GRID_SIZE) % GRID_SIZE;
+	int top = (j + 1) % GRID_SIZE;
+	
+	int neighbors[8][2] = {
+		{right, bottom}, 
+		{right, j}, 
+		{right, top},
+		{i, bottom}, 
+		{i, top},
+		{left, bottom}, 
+		{left, j}, 
+		{left, top}
+	};
+
+	for(int i = 0; i < 8; i++){
+		if(grid[neighbors[i][0]][neighbors[i][1]] == 1)
+			neighborsAlive++;
+	}
+
+	return neighborsAlive;
+}
+
+int countAliveCells(int **grid){
+	int aliveCells = 0;
+	for(int i = 0; i < GRID_SIZE; i++){
+		for(int j = 0; j < GRID_SIZE; j++){
+			if(grid[i][j]==1) aliveCells++;
+		}
+	}
+
+	return aliveCells;
 }
