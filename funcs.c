@@ -1,4 +1,5 @@
 #include "funcs.h"
+#include <omp.h>
 
 void print_grid_win(int** grid){
 	for(int i = 0; i < GRID_SIZE; i++){
@@ -76,4 +77,29 @@ int countAliveCells(int **grid){
 	}
 
 	return aliveCells;
+}
+
+void swapGrids(int** old, int** new){
+	int** aux = old;
+	old = new;
+	new = aux;
+}
+
+void runGenerations(int** grid, int** new_grid){
+	int i, j, k, alive;
+
+	for(i = 0; i < 1; i++){
+		// alive = 0;
+		#pragma omp parallel num_threads(8) private(j, k) reduction(+: alive)
+		{
+			#pragma omp for
+				for(j = 0; j < GRID_SIZE; j++){
+					for(k = 0; k < GRID_SIZE; k++){
+						printf("(%d, %d): %d\n", j, k, getNeighbors(grid, j, k));
+					}
+				}
+		}
+
+		// printf("Gen %d: %d alive.", i+1, alive);
+	}
 }

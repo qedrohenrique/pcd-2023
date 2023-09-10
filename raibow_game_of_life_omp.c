@@ -5,10 +5,11 @@
 */
 #include <stdio.h>
 #include <stdlib.h>
+#include <locale.h>
 #include "funcs.c"
 
 int main (int argc, char **argv){
-
+	setlocale(LC_CTYPE, "");
     int ** grid, ** new_grid;
 
     // ROWS
@@ -23,10 +24,7 @@ int main (int argc, char **argv){
 
 	setupGrid(grid);
 
-    print_grid_win(grid);
-	printf("\n");
-	printf("%d\n", getNeighbors(grid, 2, 2));
-	printf("%d\n", countAliveCells(grid));
+    runGenerations(grid, new_grid);
 
     return 0;
 }
