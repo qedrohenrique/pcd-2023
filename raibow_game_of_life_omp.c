@@ -21,20 +21,7 @@ int main (int argc, char **argv){
 		new_grid[i] = (float*) malloc(GRID_SIZE * sizeof(float));
 	}
 
-    //GLIDER
-	int lin = 1, col = 1;
-	grid[lin  ][col+1] = 1;
-	grid[lin+1][col+2] = 1;
-	grid[lin+2][col  ] = 1;
-	grid[lin+2][col+1] = 1;
-	grid[lin+2][col+2] = 1;
-	//R-pentomino
-	lin =10, col = 30;
-	grid[lin  ][col+1] = 1;
-	grid[lin  ][col+2] = 1;
-	grid[lin+1][col  ] = 1;
-	grid[lin+1][col+1] = 1;
-	grid[lin+2][col+1] = 1;
+	setupGrid(grid);
 
     print_grid_win(grid);
 	printf("\n");

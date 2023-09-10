@@ -20,6 +20,26 @@ void print_grid_unix(int** grid){
 	}
 }
 
+void setupGrid(int** grid){
+	//GLIDER
+	int lin = 1, col = 1;
+	grid[lin  ][col+1] = 1;
+	grid[lin+1][col+2] = 1;
+	grid[lin+2][col  ] = 1;
+	grid[lin+2][col+1] = 1;
+	grid[lin+2][col+2] = 1;
+
+	//R-pentomino
+	lin =10, col = 30;
+	grid[lin  ][col+1] = 1;
+	grid[lin  ][col+2] = 1;
+	grid[lin+1][col  ] = 1;
+	grid[lin+1][col+1] = 1;
+	grid[lin+2][col+1] = 1;
+
+	return;
+}
+
 int getNeighbors(int** grid, int i, int j){ 
 	int neighborsAlive=0;
 

@@ -8,4 +8,6 @@ typedef struct {
 
 void print_grid_win(int** grid_ptr);
 void print_grid_unix(int** grid_ptr);
+void setupGrid(int** grid);
 int getNeighbors(int** grid, int i, int j);
+int countAliveCells(int **grid);
