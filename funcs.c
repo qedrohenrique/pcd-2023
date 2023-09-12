@@ -19,6 +19,7 @@ void print_grid_unix(int** grid){
 		}
 		wprintf(L"\n");
 	}
+	wprintf(L"\n");
 }
 
 void setupGrid(int** grid){
@@ -88,16 +89,43 @@ void swapGrids(int** old, int** new){
 void runGenerations(int** grid, int** new_grid){
 	int i, j, k, alive;
 
-	for(i = 0; i < 1; i++){
+	for(i = 0; i < 2; i++){
 		// alive = 0;
 		#pragma omp parallel num_threads(8) private(j, k) reduction(+: alive)
 		{
 			#pragma omp for
 				for(j = 0; j < GRID_SIZE; j++){
 					for(k = 0; k < GRID_SIZE; k++){
-						printf("(%d, %d): %d\n", j, k, getNeighbors(grid, j, k));
+						// printf("(%d, %d - %d): %d\n", j, k, omp_get_thread_num(), getNeighbors(grid, j, k));
+						int nn = getNeighbors(grid, j, k);
+						if(grid[j][k]==1){
+							if(nn==2 || nn==3){
+								(new_grid)[j][k]=1;
+							}
+							else{
+								wprintf(L"(%d, %d) - %d\n", j, k, nn);
+								(new_grid)[j][k]=0;
+							}
+						}
+						else{
+							if(nn==3){
+								(new_grid)[j][k]=1;
+							}
+							else{
+								(new_grid)[j][k]=0;
+							}
+						}
+						//printf("j = %d, k = %d\n",j,k);
 					}
 				}
+				#pragma omp single
+				{
+				int** aux = grid;
+				grid = new_grid;
+				new_grid = aux;
+				print_grid_unix(grid);
+				}
+				#pragma omp barrier 
 		}
 
 		// printf("Gen %d: %d alive.", i+1, alive);

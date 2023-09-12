@@ -23,7 +23,7 @@ int main (int argc, char **argv){
 	}
 
 	setupGrid(grid);
-
+    print_grid_unix(grid);
     runGenerations(grid, new_grid);
 
     return 0;
