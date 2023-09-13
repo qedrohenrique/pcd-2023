@@ -2,14 +2,14 @@
 #define NUM_THREADS 1
 
 typedef struct {
-    int ** grid;
-    int ** new_grid;
+    float ** grid;
+    float ** new_grid;
 } thread_args_t;
 
-void print_grid_win(int** grid_ptr);
-void print_grid_unix(int** grid_ptr);
-void setupGrid(int** grid);
-int getNeighbors(int** grid, int i, int j);
-int countAliveCells(int **grid);
-void swapGrids(int** old, int** new);
-void runGenerations(int** grid, int** new_grid);
+void print_grid_win(float** grid_ptr);
+void print_grid_unix(float** grid_ptr);
+void setupGrid(float** grid);
+int getNeighbors(float** grid, int i, int j);
+int countAliveCells(float **grid);
+void swapGrids(float** old, float** new);
+void runGenerations(float** grid, float** new_grid);

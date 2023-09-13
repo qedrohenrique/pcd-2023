@@ -1,7 +1,7 @@
 #include "funcs.h"
 #include <omp.h>
 
-void print_grid_win(int** grid){
+void print_grid_win(float** grid){
 	for(int i = 0; i < GRID_SIZE; i++){
 		for(int j = 0; j < GRID_SIZE; j++){
 			if(grid[i][j]==1) printf("1 ");
@@ -11,7 +11,7 @@ void print_grid_win(int** grid){
 	}
 }
 
-void print_grid_unix(int** grid){
+void print_grid_unix(float** grid){
 	for(int i = 0; i < GRID_SIZE; i++){
 		for(int j = 0; j < GRID_SIZE; j++){
 			if(grid[i][j]==1){wprintf(L"%lc ", 0x25A0);}
@@ -22,7 +22,7 @@ void print_grid_unix(int** grid){
 	wprintf(L"\n");
 }
 
-void setupGrid(int** grid){
+void setupGrid(float** grid){
 	//GLIDER
 	int lin = 1, col = 1;
 	grid[lin  ][col+1] = 1;
@@ -42,7 +42,7 @@ void setupGrid(int** grid){
 	return;
 }
 
-int getNeighbors(int** grid, int i, int j){ 
+int getNeighbors(float** grid, int i, int j){ 
 	int neighborsAlive=0;
 
 	int right = (i + 1) % GRID_SIZE;
@@ -69,7 +69,7 @@ int getNeighbors(int** grid, int i, int j){
 	return neighborsAlive;
 }
 
-int countAliveCells(int **grid){
+int countAliveCells(float** grid){
 	int aliveCells = 0;
 	for(int i = 0; i < GRID_SIZE; i++){
 		for(int j = 0; j < GRID_SIZE; j++){
@@ -80,19 +80,23 @@ int countAliveCells(int **grid){
 	return aliveCells;
 }
 
-void swapGrids(int** old, int** new){
-	int** aux = old;
+void swapGrids(float** old, float** new){
+	float** aux = old;
 	old = new;
 	new = aux;
 }
 
-void runGenerations(int** grid, int** new_grid){
+void runGenerations(float** grid, float** new_grid){
 	int i, j, k, alive;
 
-	for(i = 0; i < 2; i++){
+	for(i = 0; i < 20; i++){
 		// alive = 0;
 		#pragma omp parallel num_threads(8) private(j, k) reduction(+: alive)
 		{
+			#pragma omp single
+			{
+			// print_grid_unix(grid);
+			}
 			#pragma omp for
 				for(j = 0; j < GRID_SIZE; j++){
 					for(k = 0; k < GRID_SIZE; k++){
@@ -103,26 +107,25 @@ void runGenerations(int** grid, int** new_grid){
 								(new_grid)[j][k]=1;
 							}
 							else{
-								wprintf(L"(%d, %d) - %d\n", j, k, nn);
 								(new_grid)[j][k]=0;
 							}
 						}
 						else{
 							if(nn==3){
+								wprintf(L"(%d, %d) - %d\n", j, k, nn);
 								(new_grid)[j][k]=1;
 							}
 							else{
 								(new_grid)[j][k]=0;
 							}
 						}
-						//printf("j = %d, k = %d\n",j,k);
+						// printf("j = %d, k = %d\n",j,k);
 					}
 				}
 				#pragma omp single
 				{
-				int** aux = grid;
 				grid = new_grid;
-				new_grid = aux;
+				swapGrids(grid, new_grid);
 				print_grid_unix(grid);
 				}
 				#pragma omp barrier 

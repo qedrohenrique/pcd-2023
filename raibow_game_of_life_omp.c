@@ -10,7 +10,7 @@
 
 int main (int argc, char **argv){
 	setlocale(LC_CTYPE, "");
-    int ** grid, ** new_grid;
+    float ** grid, ** new_grid;
 
     // ROWS
     grid = malloc(GRID_SIZE * sizeof(float));
