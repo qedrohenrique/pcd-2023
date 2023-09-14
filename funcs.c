@@ -7,9 +7,9 @@
 #include <sys/time.h>
 #include "funcs.h"
 
-#define NUM_GEN 5
-#define GRID_SIZE 50
-#define NUM_WORKERS 2
+#define NUM_GEN 2000
+#define GRID_SIZE 2048
+#define NUM_WORKERS 16
 
 typedef struct {
     float** grid_ptr;
@@ -24,7 +24,7 @@ int getNeighbors(float** grid, int i, int j){
 	int count=0;
 
 	for(int c=0;c<8;c++){
-		if(grid[pos[c][0]][pos[c][1]] != 0){
+		if(grid[pos[c][0]][pos[c][1]] != -1){
 			count++;
 		}
 	}
@@ -39,7 +39,7 @@ float getNeighborsAvg(float** grid, int i, int j){
 	int sum=0;
 
 	for(int c=0;c<8;c++){
-		if(grid[pos[c][0]][pos[c][1]] != 0){
+		if(grid[pos[c][0]][pos[c][1]] != -1){
 			sum += grid[pos[c][0]][pos[c][1]];
 		}
 	}
@@ -62,7 +62,7 @@ int getAlive(float** grid){
 void print_grid(float** grid_ptr){
 	for(int i=0;i<GRID_SIZE;i++){
 		for(int j=0;j<GRID_SIZE;j++){
-			if(grid_ptr[i][j]!=0){wprintf(L"%lc ", 0x25A0);}
+			if(grid_ptr[i][j]!= -1){wprintf(L"%lc ", 0x25A0);}
 			else{wprintf(L"%lc ", 0x25A1);}
 		}
 		wprintf(L"\n");
@@ -73,7 +73,7 @@ void print_grid(float** grid_ptr){
 void print_grid_float(float** grid_ptr){
 	for(int i=0;i<GRID_SIZE;i++){
 		for(int j=0;j<GRID_SIZE;j++){
-			if(grid_ptr[i][j]!=0){wprintf(L"%f ", grid_ptr[i][j]);}
+			if(grid_ptr[i][j]!= -1){wprintf(L"%f ", grid_ptr[i][j]);}
 			else{wprintf(L"%f ", grid_ptr[i][j]);}
 		}
 		wprintf(L"\n");
@@ -101,7 +101,7 @@ void setupGrid(float** grid){
 void fillGrid(float** grid){
 	for(int i = 0;  i < GRID_SIZE; i++){
 		for(int j = 0; j < GRID_SIZE; j++){
-			grid[i][j] = 0;
+			grid[i][j] = -1;
 		}
 	}
 }
@@ -116,7 +116,7 @@ int countAliveCells(float** grid){
 	int c = 0;
 	for(int i = 0; i < GRID_SIZE; i++){
 		for(int j = 0; j < GRID_SIZE; j++){
-			if(grid[i][j] != 0) c++;
+			if(grid[i][j] != -1) c++;
 		}
 	}
 	return c;	
@@ -136,29 +136,29 @@ int runGeneration(void* arg1){
 				for(j=0;j<GRID_SIZE; j++){
 					for(k=0;k<GRID_SIZE;k++){
 						int nn = getNeighbors(arg.grid_ptr, j, k);
-						if((arg.grid_ptr)[j][k]!=0){
+						if((arg.grid_ptr)[j][k]!= -1){
 							if(nn==2 || nn==3){
 								float neighborAvg = getNeighborsAvg(arg.grid_ptr, j, k);
-								(arg.newgrid_ptr)[j][k]=1;
+								(arg.newgrid_ptr)[j][k]=neighborAvg;
 							}
 							else{
-								(arg.newgrid_ptr)[j][k]=0;
+								(arg.newgrid_ptr)[j][k]=-1;
 							}
 						}
 						else{
 							if(nn==3){
 								float neighborAvg = getNeighborsAvg(arg.grid_ptr, j, k);
-								(arg.newgrid_ptr)[j][k]=1;
+								(arg.newgrid_ptr)[j][k]=neighborAvg;
 							}
 							else{
-								(arg.newgrid_ptr)[j][k]=0;
+								(arg.newgrid_ptr)[j][k]=-1;
 							}
 						}
 					}
 				}
 			#pragma omp single
 				{
-				print_grid_float(arg.grid_ptr);
+				// print_grid_float(arg.grid_ptr);
 				}
 			#pragma omp barrier 
 			#pragma omp single
