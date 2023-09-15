@@ -1,7 +1,7 @@
 /*
-    Pedro Henrique de Almeida  - 148526
-    Matheus
-    Rafaela
+  Pedro Henrique de Almeida  - 148526
+  Matheus Ferreira Santos - 148410
+  Rafaela Cristine dos Santos Uchôas - 140351
 */
 
 #include <stdio.h>
@@ -10,60 +10,66 @@
 #include <omp.h>
 #include <wchar.h>
 #include <locale.h>
-#include <sys/time.h>   
+#include <sys/time.h>
 #include "funcs.h"
 #include "funcs.c"
 
 
 int main(int argc, char** argv){
 	setlocale(LC_CTYPE, "");
-    
-	struct timeval inicio, final;
-	struct timeval inicio_concorrente, final_concorrente;
-	int tmili, tmili_concorrente;
 
-	gettimeofday(&inicio, NULL);
-	
-	int i, j;
+  struct timeval inicio, final;
+  struct timeval inicio_concorrente, final_concorrente;
+  int tmili, tmili_concorrente;
 
-    /*
-    *
-    *   GRID MEMORY ALLOCATION
-    * 
-    */
+  gettimeofday(&inicio, NULL);
 
-    float** grid = (float**) malloc(GRID_SIZE * sizeof(float*));
-	float** newgrid = (float**) malloc(GRID_SIZE * sizeof(float*));
-	for(i=0;i<GRID_SIZE;i++){
-		grid[i] = (float*) calloc(GRID_SIZE , sizeof(float));
-		newgrid[i] = (float*) calloc(GRID_SIZE , sizeof(float));
-	}
+  int i, j;
 
-    thread_args* arg;
-	arg = (thread_args*)malloc(sizeof(thread_args));
+  /*
+  *
+  *   GRID MEMORY ALLOCATION
+  *
+  */
 
-    /*
-    *
-    *   GRID SETUP
-    * 
-    */
-    fillGrid(grid);
-    fillGrid(newgrid);
-    setupGrid(grid);
-	setupArgs(arg, grid, newgrid);
+  float** grid = (float**)malloc(GRID_SIZE * sizeof(float*));
+  float** newgrid = (float**)malloc(GRID_SIZE * sizeof(float*));
+  for(i = 0; i < GRID_SIZE; i++){
+    grid[i] = (float*)calloc(GRID_SIZE , sizeof(float));
+    newgrid[i] = (float*)calloc(GRID_SIZE , sizeof(float));
+  }
 
-	gettimeofday(&inicio_concorrente, NULL);
-	int alive = runGeneration((void*) arg);
-	gettimeofday(&final_concorrente, NULL);
+  thread_args* arg;
+  arg = (thread_args*)malloc(sizeof(thread_args));
 
-	wprintf(L"Vivos ao final: %d\n", alive);
-	gettimeofday(&final, NULL);
-	
-	tmili = (int) (1000 * (final.tv_sec - inicio.tv_sec) + (final.tv_usec - inicio.tv_usec) / 1000);
-	tmili_concorrente = (int) (1000 * (final_concorrente.tv_sec - inicio_concorrente.tv_sec) + (final_concorrente.tv_usec - inicio_concorrente.tv_usec) / 1000);  
+  /*
+  *
+  *   GRID SETUP
+  *
+  */
+  fillGrid(grid);
+  fillGrid(newgrid);
+  setupGrid(grid);
+  setupArgs(arg, grid, newgrid);
 
-	wprintf(L"tempo decorrido: %d milisegundos\n", tmili);
-	wprintf(L"tempo trecho concorrente: %d milisegundos\n", tmili_concorrente);
-	
-	return 0;
+  gettimeofday(&inicio_concorrente, NULL);
+  int alive = runGeneration((void*) arg);
+  gettimeofday(&final_concorrente, NULL);
+
+  wprintf(L"Vivos ao final: %d\n", alive);
+  gettimeofday(&final, NULL);
+
+  tmili = (int)(1000 * (final.tv_sec - inicio.tv_sec)
+    + (final.tv_usec - inicio.tv_usec) / 1000);
+
+  tmili_concorrente = (int)
+    (1000 * (final_concorrente.tv_sec - inicio_concorrente.tv_sec)
+    + (final_concorrente.tv_usec - inicio_concorrente.tv_usec) / 1000);
+
+  wprintf(L"tempo decorrido: %d milisegundos\n", tmili);
+  wprintf(L"tempo trecho concorrente: %d milisegundos\n",
+    tmili_concorrente);
+
+  return 0;
 }
+
