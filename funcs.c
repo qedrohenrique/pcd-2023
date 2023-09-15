@@ -7,16 +7,6 @@
 #include <sys/time.h>
 #include "funcs.h"
 
-#define NUM_GEN 2000
-#define GRID_SIZE 2048
-#define NUM_WORKERS 16
-
-
-typedef struct {
-  float** grid_ptr;
-  float** newgrid_ptr;
-} thread_args;
-
 
 int getNeighbors(float** grid, int i, int j){
   int i_low = (i + 1) % GRID_SIZE;
@@ -130,10 +120,10 @@ void fillGrid(float** grid){
       grid[i][j] = -1;
 }
 
-void swapGrids(float** new, float** old){
-  float** aux = new;
-  new = old;
-  old = aux;
+void swapGrids(float** new_grid, float** old_grid){
+  float** aux = new_grid;
+  new_grid = old_grid;
+  old_grid = aux;
 }
 
 int countAliveCells(float** grid){

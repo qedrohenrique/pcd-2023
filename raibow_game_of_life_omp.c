@@ -12,7 +12,6 @@
 #include <locale.h>
 #include <sys/time.h>
 #include "funcs.h"
-#include "funcs.c"
 
 
 int main(int argc, char** argv){
