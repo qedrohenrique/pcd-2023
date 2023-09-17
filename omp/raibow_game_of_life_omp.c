@@ -57,7 +57,7 @@ int main(int argc, char** argv){
   int alive = runGeneration((void*) arg);
   gettimeofday(&final_concorrente, NULL);
 
-  wprintf(L"Vivos ao final: %d\n", alive);
+  // wprintf(L"Vivos ao final: %d\n", alive);
   gettimeofday(&final, NULL);
 
   tmili = (int)(1000 * (final.tv_sec - inicio.tv_sec)

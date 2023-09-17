@@ -1,4 +1,4 @@
-#define NUM_GEN 100
+#define NUM_GEN 10
 #define GRID_SIZE 2048
 #define NUM_WORKERS 4
 

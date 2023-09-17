@@ -59,18 +59,6 @@ float getNeighborsAvg(float** grid, int i, int j){
   return sum / 8.0;
 }
 
-int getAlive(float** grid){
-  int q = 0, i, j;
-
-  #pragma omp for private(i, j)
-  for(i = 0; i < GRID_SIZE; i++)
-    for(j = 0; j < GRID_SIZE; j++)
-      if(grid[i][j] == 1)
-        q++;
-
-  return q;
-}
-
 void print_grid(float** grid_ptr){
   for(int i = 0; i < GRID_SIZE; i++){
     for(int j = 0; j < GRID_SIZE; j++){
@@ -181,7 +169,7 @@ int runGeneration(void* arg1){
         }
         #pragma omp barrier
     }
-    alive_count += getAlive(arg.grid_ptr);
+    alive_count += countAliveCells(arg.grid_ptr);
   }
   return alive_count;
 }
