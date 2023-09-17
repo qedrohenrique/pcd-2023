@@ -11,7 +11,7 @@
 #include <wchar.h>
 #include <locale.h>
 #include <sys/time.h>
-#include "funcs.c"
+#include "funcs.h"
 
 
 int main(int argc, char** argv){
