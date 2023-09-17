@@ -11,10 +11,12 @@
 #include <wchar.h>
 #include <locale.h>
 #include <sys/time.h>
-#include "funcs.h"
+#include "funcs.c"
 
 
 int main(int argc, char** argv){
+  wprintf(L"Threads: %d\n", NUM_WORKERS);
+  wprintf(L"Gens: %d\n", NUM_GEN);
 	setlocale(LC_CTYPE, "");
 
   struct timeval inicio, final;

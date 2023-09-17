@@ -1,6 +1,6 @@
-#define NUM_GEN 2000
+#define NUM_GEN 100
 #define GRID_SIZE 2048
-#define NUM_WORKERS 16
+#define NUM_WORKERS 4
 
 
 typedef struct {
