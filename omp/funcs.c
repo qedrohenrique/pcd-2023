@@ -108,12 +108,6 @@ void fillGrid(float** grid){
       grid[i][j] = -1;
 }
 
-void swapGrids(float** new_grid, float** old_grid){
-  float** aux = new_grid;
-  new_grid = old_grid;
-  old_grid = aux;
-}
-
 int countAliveCells(float** grid){
   int c = 0;
   for(int i = 0; i < GRID_SIZE; i++)

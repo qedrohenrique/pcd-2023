@@ -10,7 +10,6 @@ void print_grid(float** grid_ptr);
 void print_grid_float(float** grid_ptr);
 void setupGrid(float** grid);
 void fillGrid(float** grid);
-void swapGrids(float** new_grid, float** old_grid);
 int countAliveCells(float** grid);
 int runGeneration(float** grid_1, float** grid_2);
 
