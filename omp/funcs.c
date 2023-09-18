@@ -123,58 +123,53 @@ int countAliveCells(float** grid){
   return c;
 }
 
-int runGeneration(void* arg1){
-  thread_args arg = *((thread_args*) arg1);
+int runGeneration(float** grid_1, float** grid_2){
   int i, j, k, alive_count = 0;
+
+  float** ptr1 = grid_1;
+  float** ptr2 = grid_2;
+
   #pragma omp parallel num_threads(NUM_WORKERS) private(i, j, k)
   #pragma omp reduction(+: alive_count)
   {
     for(i = 0; i < NUM_GEN; i++){
       #pragma omp single
       {
-        wprintf(L"Gen %d: %d\n", i, countAliveCells(arg.grid_ptr));
+        wprintf(L"Gen %d: %d\n", i, countAliveCells(ptr1));
       }
       #pragma omp for
         for(j = 0; j < GRID_SIZE; j++){
           for(k = 0; k < GRID_SIZE; k++){
-            int nn = getNeighbors(arg.grid_ptr, j, k);
-            if((arg.grid_ptr)[j][k] != -1){
-              if(nn == 2 || nn == 3){
-                float neighborAvg = getNeighborsAvg(arg.grid_ptr, j, k);
-                (arg.newgrid_ptr)[j][k]=neighborAvg;
-              }
+            int nn = getNeighbors(ptr1, j, k);
+            if((ptr1)[j][k] != -1){
+              if(nn == 2 || nn == 3)
+                ptr2[j][k] = getNeighborsAvg(ptr1, j, k);
               else
-                (arg.newgrid_ptr)[j][k]=-1;
+                ptr2[j][k] = -1;
             }
             else{
-              if(nn == 3){
-                float neighborAvg = getNeighborsAvg(arg.grid_ptr, j, k);
-                (arg.newgrid_ptr)[j][k] = neighborAvg;
-              }
+              if(nn == 3)
+                ptr2[j][k] = getNeighborsAvg(ptr1, j, k);
               else
-                (arg.newgrid_ptr)[j][k] = -1;
+                ptr2[j][k] = -1;
             }
           }
         }
         #pragma omp single
         {
-        // print_grid_float(arg.grid_ptr);
+        // print_grid_float(ptr1);
         }
         #pragma omp barrier
         #pragma omp single
         {
-          float** aux = arg.grid_ptr;
-          arg.grid_ptr = arg.newgrid_ptr;
-          arg.newgrid_ptr = aux;
+          float** aux = ptr1;
+          ptr1 = ptr2;
+          ptr2 = aux;
         }
         #pragma omp barrier
     }
-    alive_count += countAliveCells(arg.grid_ptr);
+    alive_count += countAliveCells(ptr1);
   }
   return alive_count;
 }
 
-void setupArgs(thread_args* arg, float** grid_ptr, float** newgrid_ptr){
-  arg->grid_ptr = grid_ptr;
-  arg->newgrid_ptr = newgrid_ptr;
-}
