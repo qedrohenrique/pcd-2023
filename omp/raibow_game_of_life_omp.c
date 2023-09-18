@@ -40,9 +40,6 @@ int main(int argc, char** argv){
     newgrid[i] = (float*)calloc(GRID_SIZE , sizeof(float));
   }
 
-  thread_args* arg;
-  arg = (thread_args*)malloc(sizeof(thread_args));
-
   /*
   *
   *   GRID SETUP
@@ -51,10 +48,9 @@ int main(int argc, char** argv){
   fillGrid(grid);
   fillGrid(newgrid);
   setupGrid(grid);
-  setupArgs(arg, grid, newgrid);
 
   gettimeofday(&inicio_concorrente, NULL);
-  int alive = runGeneration((void*) arg);
+  int alive = runGeneration(grid, newgrid);
   gettimeofday(&final_concorrente, NULL);
 
   // wprintf(L"Vivos ao final: %d\n", alive);
