@@ -15,9 +15,9 @@
 
 
 int main(int argc, char** argv){
+	setlocale(LC_CTYPE, "");
   wprintf(L"Threads: %d\n", NUM_WORKERS);
   wprintf(L"Gens: %d\n", NUM_GEN);
-	setlocale(LC_CTYPE, "");
 
   struct timeval inicio, final;
   struct timeval inicio_concorrente, final_concorrente;

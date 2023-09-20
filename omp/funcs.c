@@ -27,7 +27,7 @@ int getNeighbors(float** grid, int i, int j){
   int count = 0;
 
   for(int c = 0; c < 8; c++)
-    if(grid[pos[c][0]][pos[c][1]] != -1)
+    if(grid[pos[c][0]][pos[c][1]] != 0)
       count++;
 
 	return count;
@@ -52,7 +52,7 @@ float getNeighborsAvg(float** grid, int i, int j){
   int sum = 0;
 
   for(int c = 0; c < 8; c++)
-    if(grid[pos[c][0]][pos[c][1]] != -1)
+    if(grid[pos[c][0]][pos[c][1]] != 0)
       sum += grid[pos[c][0]][pos[c][1]];
 
   // wprintf(L"AVG(%d, %d):%d\n ", i, j, sum/8.0);
@@ -60,9 +60,10 @@ float getNeighborsAvg(float** grid, int i, int j){
 }
 
 void print_grid(float** grid_ptr){
+  setlocale(LC_CTYPE, "");
   for(int i = 0; i < GRID_SIZE; i++){
     for(int j = 0; j < GRID_SIZE; j++){
-      if(grid_ptr[i][j] != -1)
+      if(grid_ptr[i][j] != 0)
         wprintf(L"%lc ", 0x25A0);
       else
         wprintf(L"%lc ", 0x25A1);
@@ -75,10 +76,10 @@ void print_grid(float** grid_ptr){
 void print_grid_float(float** grid_ptr){
   for(int i = 0; i < GRID_SIZE; i++){
     for(int j = 0; j < GRID_SIZE; j++){
-      if(grid_ptr[i][j] != -1)
-        wprintf(L"%f ", grid_ptr[i][j]);
+      if(grid_ptr[i][j] != 0)
+        wprintf(L"%.2f ", grid_ptr[i][j]);
       else
-        wprintf(L"%f ", grid_ptr[i][j]);
+        wprintf(L"%.2f ", grid_ptr[i][j]);
     }
     wprintf(L"\n");
   }
@@ -105,14 +106,14 @@ void setupGrid(float** grid){
 void fillGrid(float** grid){
   for(int i = 0;  i < GRID_SIZE; i++)
     for(int j = 0; j < GRID_SIZE; j++)
-      grid[i][j] = -1;
+      grid[i][j] = 0;
 }
 
 int countAliveCells(float** grid){
   int c = 0;
   for(int i = 0; i < GRID_SIZE; i++)
     for(int j = 0; j < GRID_SIZE; j++)
-      if(grid[i][j] != -1) c++;
+      if(grid[i][j] != 0) c++;
 
   return c;
 }
@@ -135,23 +136,30 @@ int runGeneration(float** grid_1, float** grid_2){
         for(j = 0; j < GRID_SIZE; j++){
           for(k = 0; k < GRID_SIZE; k++){
             int nn = getNeighbors(ptr1, j, k);
-            if((ptr1)[j][k] != -1){
-              if(nn == 2 || nn == 3)
-                ptr2[j][k] = getNeighborsAvg(ptr1, j, k);
+            if((ptr1)[j][k] != 0){
+              if(nn == 2 || nn == 3){
+                float aliveCell = 0;
+                if (getNeighborsAvg(ptr1, j, k) > 0) aliveCell = 1.0;
+                ptr2[j][k] = aliveCell;
+
+              }
               else
-                ptr2[j][k] = -1;
+                ptr2[j][k] = 0;
             }
             else{
-              if(nn == 3)
-                ptr2[j][k] = getNeighborsAvg(ptr1, j, k);
+              if(nn == 3){
+                float aliveCell = 0;
+                if (getNeighborsAvg(ptr1, j, k) > 0) aliveCell = 1.0;
+                ptr2[j][k] = aliveCell;
+              }
               else
-                ptr2[j][k] = -1;
+                ptr2[j][k] = 0;
             }
           }
         }
         #pragma omp single
         {
-        // print_grid_float(ptr1);
+        print_grid(ptr1);
         }
         #pragma omp barrier
         #pragma omp single

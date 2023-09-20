@@ -1,5 +1,5 @@
-#define NUM_GEN 10
-#define GRID_SIZE 2048
+#define NUM_GEN 3
+#define GRID_SIZE 50
 #define NUM_WORKERS 4
 
 
