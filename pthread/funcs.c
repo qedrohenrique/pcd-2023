@@ -7,7 +7,6 @@
 #include <sys/time.h>
 #include "funcs.h"
 
-// pthread_barrier_t barrier;
 
 int getNeighbors(float** grid, int i, int j){
   int i_low = (i + 1) % GRID_SIZE;
@@ -56,7 +55,6 @@ float getNeighborsAvg(float** grid, int i, int j){
     if(grid[pos[c][0]][pos[c][1]] != -1)
       sum += grid[pos[c][0]][pos[c][1]];
 
-  // wprintf(L"AVG(%d, %d):%d\n ", i, j, sum/8.0);
   return sum / 8.0;
 }
 
@@ -124,25 +122,91 @@ int countAliveCells(float** grid){
   return c;
 }
 
-void* runGeneration(void* arg1){
-	thread_args* arg = (thread_args*) arg1;
-
-  // codigo aqui
+void* parallel_generation(void* arg) {
+  thread_args* args = (thread_args*) arg;
+  float** ptr1 = args->grid_ptr;
+  float** ptr2 = args->newgrid_ptr;
 
   for(int i = 0 ; i < NUM_GEN; i++){
-      wprintf(L"Gen %d: %d\n", i, countAliveCells(arg->grid_ptr));
+    *args->count_alive = 0;
+
+    for (int j = args->start; j <= args->end; j++) {
+      int idx_1 = j / GRID_SIZE;
+      int idx_2 = j - idx_1 * GRID_SIZE;
+
+      int nn = getNeighbors(ptr1, idx_1, idx_2);
+      if(ptr1[idx_1][idx_2] != -1) {
+        *args->count_alive += 1;
+
+        if(nn == 2 || nn == 3)
+          ptr2[idx_1][idx_2] = getNeighborsAvg(ptr1, idx_1, idx_2);
+        else
+          ptr2[idx_1][idx_2] = -1;
+
+      } else {
+        if(nn == 3)
+          ptr2[idx_1][idx_2] = getNeighborsAvg(ptr1, idx_1, idx_2);
+        else
+          ptr2[idx_1][idx_2] = -1;
+      }
+    }
+
+    float** aux = ptr1;
+    ptr1 = ptr2;
+    ptr2 = aux;
+
+    pthread_barrier_wait(args->barrier);
+    pthread_barrier_wait(args->barrier);
   }
 
-  int alive_count = countAliveCells(arg->grid_ptr);
-	int* ret = (int*) malloc(sizeof(int));
-	*ret = alive_count;
-	pthread_exit((void*) ret);
+  pthread_exit(NULL);
 }
 
+void runGeneration(float** grid_1, float** grid_2){
+
+  int cells_per_thread = (GRID_SIZE * GRID_SIZE) / NUM_WORKERS;
+  int counter = GRID_SIZE * GRID_SIZE;
+  int actual = 0;
+
+  pthread_t threads[NUM_WORKERS];
+  thread_args args[NUM_WORKERS];
+  int count_alive[NUM_WORKERS] = {0};
+
+  pthread_barrier_t barrier;
+  int err = pthread_barrier_init(&barrier, NULL, NUM_WORKERS + 1);
+  if(err) {
+    perror("Error on creating barrier\n");
+    exit(1);
+  }
+
+  for(int i = 0; i < NUM_WORKERS; i++) {
+    args[i].grid_ptr = grid_1;
+    args[i].newgrid_ptr = grid_2;
+    args[i].count_alive = &count_alive[i];
+    args[i].start = actual;
+    args[i].end = actual + cells_per_thread - 1;
+    args[i].barrier = &barrier;
+    if(i == NUM_WORKERS - 1)
+      args[i].end = GRID_SIZE * GRID_SIZE - 1;
+
+    pthread_create(&threads[i], NULL, parallel_generation, &args[i]);
+    actual += cells_per_thread;
+  }
 
 
-void setupArgs(thread_args* arg, float** grid_ptr, float** newgrid_ptr, int shift){
-  arg->shift = shift;
-  arg->grid_ptr = grid_ptr;
-  arg->newgrid_ptr = newgrid_ptr;
+  for(int i = 0; i < NUM_GEN; i++) {
+    pthread_barrier_wait(&barrier);
+
+    int count = 0;
+    for(int j = 0; j < NUM_WORKERS; j++)
+      count += count_alive[j];
+    wprintf(L"Gen %d: %d\n", i, count);
+
+    pthread_barrier_wait(&barrier);
+  }
+
+  for(int i = 0; i < NUM_WORKERS; i++)
+    pthread_join(threads[i], NULL);
+
 }
+
