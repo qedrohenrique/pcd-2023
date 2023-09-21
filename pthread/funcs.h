@@ -1,11 +1,17 @@
-#define NUM_GEN 100
+#include <pthread.h>
+
+#define NUM_GEN 10
 #define GRID_SIZE 2048
 #define NUM_WORKERS 4
 
+
 typedef struct {
-  int shift;
+  int start;
+  int end;
+  pthread_barrier_t* barrier;
   float** grid_ptr;
   float** newgrid_ptr;
+  int* count_alive;
 } thread_args;
 
 int getNeighbors(float** grid, int i, int j);
@@ -17,6 +23,5 @@ void setupGrid(float** grid);
 void fillGrid(float** grid);
 void swapGrids(float** new_grid, float** old_grid);
 int countAliveCells(float** grid);
-void * runGeneration(void* arg1);
-void setupArgs(thread_args* arg, float** grid_ptr, float** newgrid_ptr, int shift);
+void runGeneration(float** grid_1, float** grid_2);
 

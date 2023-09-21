@@ -1,5 +1,5 @@
 # executable
-raibow_game_of_life_omp
+raibow_game_of_life_pthread
 
 # object files
 *.o
