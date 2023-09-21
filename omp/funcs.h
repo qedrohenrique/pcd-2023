@@ -1,3 +1,9 @@
+/*
+  Pedro Henrique de Almeida  - 148526
+  Matheus Ferreira Santos - 148410
+  Rafaela Cristine dos Santos Uchôas - 140351
+*/
+
 #define NUM_GEN 3
 #define GRID_SIZE 50
 #define NUM_WORKERS 4
