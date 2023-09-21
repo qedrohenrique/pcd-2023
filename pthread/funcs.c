@@ -27,7 +27,7 @@ int getNeighbors(float** grid, int i, int j){
   int count = 0;
 
   for(int c = 0; c < 8; c++)
-    if(grid[pos[c][0]][pos[c][1]] != -1)
+    if(grid[pos[c][0]][pos[c][1]] != 0)
       count++;
 
 	return count;
@@ -52,7 +52,7 @@ float getNeighborsAvg(float** grid, int i, int j){
   int sum = 0;
 
   for(int c = 0; c < 8; c++)
-    if(grid[pos[c][0]][pos[c][1]] != -1)
+    if(grid[pos[c][0]][pos[c][1]] != 0)
       sum += grid[pos[c][0]][pos[c][1]];
 
   return sum / 8.0;
@@ -61,7 +61,7 @@ float getNeighborsAvg(float** grid, int i, int j){
 void print_grid(float** grid_ptr){
   for(int i = 0; i < GRID_SIZE; i++){
     for(int j = 0; j < GRID_SIZE; j++){
-      if(grid_ptr[i][j] != -1)
+      if(grid_ptr[i][j] != 0)
         wprintf(L"%lc ", 0x25A0);
       else
         wprintf(L"%lc ", 0x25A1);
@@ -74,7 +74,7 @@ void print_grid(float** grid_ptr){
 void print_grid_float(float** grid_ptr){
   for(int i = 0; i < GRID_SIZE; i++){
     for(int j = 0; j < GRID_SIZE; j++){
-      if(grid_ptr[i][j] != -1)
+      if(grid_ptr[i][j] != 0)
         wprintf(L"%f ", grid_ptr[i][j]);
       else
         wprintf(L"%f ", grid_ptr[i][j]);
@@ -104,7 +104,7 @@ void setupGrid(float** grid){
 void fillGrid(float** grid){
   for(int i = 0;  i < GRID_SIZE; i++)
     for(int j = 0; j < GRID_SIZE; j++)
-      grid[i][j] = -1;
+      grid[i][j] = 0;
 }
 
 void swapGrids(float** new_grid, float** old_grid){
@@ -117,7 +117,7 @@ int countAliveCells(float** grid){
   int c = 0;
   for(int i = 0; i < GRID_SIZE; i++)
     for(int j = 0; j < GRID_SIZE; j++)
-      if(grid[i][j] != -1) c++;
+      if(grid[i][j] != 0) c++;
 
   return c;
 }
@@ -135,19 +135,23 @@ void* parallel_generation(void* arg) {
       int idx_2 = j - idx_1 * GRID_SIZE;
 
       int nn = getNeighbors(ptr1, idx_1, idx_2);
-      if(ptr1[idx_1][idx_2] != -1) {
+      if(ptr1[idx_1][idx_2] != 0) {
         *args->count_alive += 1;
 
-        if(nn == 2 || nn == 3)
-          ptr2[idx_1][idx_2] = getNeighborsAvg(ptr1, idx_1, idx_2);
+        if(nn == 2 || nn == 3){
+          float avg = getNeighborsAvg(ptr1, idx_1, idx_2);
+          if(avg > 0) ptr2[idx_1][idx_2] = 1;
+        }
         else
-          ptr2[idx_1][idx_2] = -1;
+          ptr2[idx_1][idx_2] = 0;
 
       } else {
-        if(nn == 3)
-          ptr2[idx_1][idx_2] = getNeighborsAvg(ptr1, idx_1, idx_2);
+        if(nn == 3){
+          float avg = getNeighborsAvg(ptr1, idx_1, idx_2);
+          if(avg > 0) ptr2[idx_1][idx_2] = 1;
+        }
         else
-          ptr2[idx_1][idx_2] = -1;
+          ptr2[idx_1][idx_2] = 0;
       }
     }
 
@@ -163,7 +167,6 @@ void* parallel_generation(void* arg) {
 }
 
 void runGeneration(float** grid_1, float** grid_2){
-
   int cells_per_thread = (GRID_SIZE * GRID_SIZE) / NUM_WORKERS;
   int counter = GRID_SIZE * GRID_SIZE;
   int actual = 0;
