@@ -1,5 +1,5 @@
 CC = gcc
-TARGET = raibow_game_of_life_pthread
+TARGET = rainbow_game_of_life_pthread
 SRC = $(wildcard *.c)
 OBJ = $(SRC:.c=.o)
 CFLAGS = -fopenmp -pthread -lGL -lglut
@@ -12,5 +12,5 @@ all: $(OBJ)
 
 clean:
 	rm *.o
-	rm raibow_game_of_life_pthread
+	rm rainbow_game_of_life_pthread
 
