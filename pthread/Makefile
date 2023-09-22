@@ -12,5 +12,5 @@ all: $(OBJ)
 
 clean:
 	rm *.o
-	rm raibow_game_of_life_omp
+	rm raibow_game_of_life_pthread
 
