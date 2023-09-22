@@ -51,6 +51,15 @@ int main(int argc, char** argv){
   fillGrid(newgrid);
   setupGrid(grid);
 
+  #ifdef OPENGL
+  pthread_t opengl_loop;
+  struct args arg = {
+    .argc = argc,
+    .argv = argv
+  };
+  pthread_create(&opengl_loop, NULL, config_opengl, &arg);
+  #endif
+
   gettimeofday(&inicio_concorrente, NULL);
   runGeneration(grid, newgrid);
   gettimeofday(&final, NULL);
@@ -65,6 +74,10 @@ int main(int argc, char** argv){
   wprintf(L"tempo decorrido: %d milisegundos\n", tmili);
   wprintf(L"tempo trecho concorrente: %d milisegundos\n",
     tmili_concorrente);
+
+  #ifdef OPENGL
+  pthread_join(opengl_loop, NULL);
+  #endif
 
   return 0;
 }

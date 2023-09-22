@@ -27,3 +27,12 @@ void swapGrids(float** new_grid, float** old_grid);
 int countAliveCells(float** grid);
 void runGeneration(float** grid_1, float** grid_2);
 
+struct args {
+  int argc;
+  char** argv;
+};
+
+void* config_opengl(void* arg);
+void draw();
+void idle();
+
