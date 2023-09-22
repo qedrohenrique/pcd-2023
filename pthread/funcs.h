@@ -6,10 +6,6 @@
 
 #include <pthread.h>
 
-#define NUM_GEN 1000
-#define GRID_SIZE 2048
-#define NUM_WORKERS 4
-
 
 typedef struct {
   int start;

@@ -7,7 +7,7 @@ CFLAGS = -fopenmp -pthread
 all: $(OBJ)
 	$(CC) -o $(TARGET) $(OBJ) $(CFLAGS)
 
-%.o: %.c
+%.o: %.c config.h
 	$(CC) -o $@ -c $< $(CFLAGS)
 
 clean:

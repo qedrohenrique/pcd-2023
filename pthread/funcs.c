@@ -11,7 +11,9 @@
 #include <wchar.h>
 #include <locale.h>
 #include <sys/time.h>
+
 #include "funcs.h"
+#include "config.h"
 
 
 int getNeighbors(float** grid, int i, int j){
