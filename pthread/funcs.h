@@ -6,10 +6,6 @@
 
 #include <pthread.h>
 
-#define NUM_GEN 1000
-#define GRID_SIZE 2048
-#define NUM_WORKERS 4
-
 
 typedef struct {
   int start;
@@ -30,4 +26,13 @@ void fillGrid(float** grid);
 void swapGrids(float** new_grid, float** old_grid);
 int countAliveCells(float** grid);
 void runGeneration(float** grid_1, float** grid_2);
+
+struct args {
+  int argc;
+  char** argv;
+};
+
+void* config_opengl(void* arg);
+void draw();
+void idle();
 

@@ -11,7 +11,12 @@
 #include <wchar.h>
 #include <locale.h>
 #include <sys/time.h>
+
+#include <GL/gl.h>
+#include <GL/freeglut.h>
+
 #include "funcs.h"
+#include "config.h"
 
 
 int getNeighbors(float** grid, int i, int j){
@@ -128,6 +133,10 @@ int countAliveCells(float** grid){
   return c;
 }
 
+float** grid = {0};
+int redraw_flag = 0;
+int exit_flag = 0;
+
 void* parallel_generation(void* arg) {
   thread_args* args = (thread_args*) arg;
   float** ptr1 = args->grid_ptr;
@@ -202,6 +211,8 @@ void runGeneration(float** grid_1, float** grid_2){
     actual += cells_per_thread;
   }
 
+  float** ptr1 = grid_1;
+  float** ptr2 = grid_2;
 
   for(int i = 0; i < NUM_GEN; i++) {
     pthread_barrier_wait(&barrier);
@@ -211,11 +222,77 @@ void runGeneration(float** grid_1, float** grid_2){
       count += count_alive[j];
     wprintf(L"Gen %d: %d\n", i, count);
 
+    grid = ptr1;
+    ptr1 = ptr2;
+    ptr2 = grid;
+
+    #ifdef OPENGL
+    redraw_flag = 1;
+    #endif
+
+    #ifdef PRINT_CONSOLE
+    print_grid(grid);
+    #endif
+
+    usleep(SLEEP_BETWEEN_FRAMES);
+
     pthread_barrier_wait(&barrier);
   }
+
+  exit_flag = 1;
 
   for(int i = 0; i < NUM_WORKERS; i++)
     pthread_join(threads[i], NULL);
 
+}
+
+void* config_opengl(void* arg) {
+  struct args* func_args = (struct args*)arg;
+
+  glutInit(&func_args->argc, func_args->argv);
+  glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
+  glutInitWindowPosition(250, 100);
+  glutInitWindowSize(700, 700);
+  glutCreateWindow("Rainbow Game of Life");
+  glutDisplayFunc(draw);
+  glutIdleFunc(idle);
+  glutMainLoop();
+
+  return NULL;
+}
+
+void draw() {
+  float step = 2.0 / GRID_SIZE;
+
+  if(!grid) {
+    glFlush();
+    return;
+  }
+
+  for (int i = 0; i < GRID_SIZE; i++) {
+    for (int j = 0; j < GRID_SIZE; j++) {
+      glColor3f(1, 1, 1);
+      if(grid[i][j])
+        glColor3f(0, 0, 0);
+      glBegin(GL_POLYGON);
+      glVertex2f(-1 + step * j, 1 - step * i);
+      glVertex2f(-1 + step * j + step, 1 - step * i);
+      glVertex2f(-1 + step * j + step, 1 - step * i - step);
+      glVertex2f(-1 + step * j, 1 - step * i - step);
+      glEnd();
+    }
+  }
+  glFlush();
+}
+
+void idle() {
+  if(!redraw_flag)
+    return;
+
+  if(exit_flag)
+    exit(0);
+
+  redraw_flag = 0;
+  glutPostRedisplay();
 }
 
