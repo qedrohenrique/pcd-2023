@@ -1,3 +1,9 @@
+/*
+  Pedro Henrique de Almeida  - 148526
+  Matheus Ferreira Santos - 148410
+  Rafaela Cristine dos Santos Uchôas - 140351
+*/
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <pthread.h>
