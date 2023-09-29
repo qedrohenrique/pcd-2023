@@ -10,7 +10,7 @@ int respond = 0;
 int soma = 0;
 
 void* client(void *arg){
-    int i = *((int*) arg); 
+    int i = *((int*) arg) + 1; 
     while(1){
         while(respond != i)
             request = i;
