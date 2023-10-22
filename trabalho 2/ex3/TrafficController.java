@@ -12,24 +12,28 @@ public class TrafficController {
     public void enterLeft() {
         try {
             sem.acquire();
+            System.out.println("Left Acquire: " +sem.availablePermits());
         }
         catch (InterruptedException e) {
-            System.out.println("left: " + e);
+            System.out.println("Left: " + e);
         }
     }
     public void enterRight() {
         try {
             sem.acquire();
+            System.out.println("Right Acquire: " +sem.availablePermits());
         }
         catch (InterruptedException e) {
-            System.out.println("right - " + e);
+            System.out.println("Right - " + e);
         }
     }
     public void leaveLeft() {
         sem.release();
+        System.out.println("Left Released: " +sem.availablePermits());
     }
     public void leaveRight() {
         sem.release();
+        System.out.println("Right released: " +sem.availablePermits());
     }
 
 }
