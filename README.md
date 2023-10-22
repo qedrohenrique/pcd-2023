@@ -1,5 +1,4 @@
-# pcd-2023
-Trabalhos - PCD UNIFESP 2023/02
+# Trabalhos - PCD UNIFESP 2023/02
 
 Trabalhos desenvolvido para a disciplina de Programação Concorrente e Distribuída, turma Noturno, no segundo semestre de 2023 na UNIFESP.
 
