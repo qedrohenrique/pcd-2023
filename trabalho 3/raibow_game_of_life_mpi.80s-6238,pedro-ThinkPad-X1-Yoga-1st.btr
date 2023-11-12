@@ -1,0 +1,8 @@
+
+raibow_game_of_life_mpi:6238 terminated with signal 11 at PC=562c306a96df SP=7fff69f37d70.  Backtrace:
+./raibow_game_of_life_mpi(+0x16df)[0x562c306a96df]
+./raibow_game_of_life_mpi(+0x1e78)[0x562c306a9e78]
+./raibow_game_of_life_mpi(+0x2051)[0x562c306aa051]
+/lib/x86_64-linux-gnu/libc.so.6(+0x29d90)[0x7fa55a429d90]
+/lib/x86_64-linux-gnu/libc.so.6(__libc_start_main+0x80)[0x7fa55a429e40]
+./raibow_game_of_life_mpi(+0x11e5)[0x562c306a91e5]

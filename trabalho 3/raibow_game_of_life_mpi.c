@@ -14,11 +14,8 @@
 #include <mpi.h>
 #include "funcs.h"
 
-int main(){
-
+int main(int argc, char** argv){
   setlocale(LC_CTYPE, "");
-
-  wprintf(L"[!] Threads: %d Generations: %d\n", NUM_WORKERS, NUM_GEN);
 
   struct timeval inicio, final;
   struct timeval inicio_concorrente, final_concorrente;
@@ -35,25 +32,14 @@ int main(){
     newgrid[i] = (float*)calloc(GRID_SIZE , sizeof(float));
   }
 
-  MPI_Init(NULL, NULL);
+  fillGrid(grid);
+  fillGrid(newgrid);
+  setupGrid(grid);
 
-  int rank;
-  MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+  MPI_Init(&argc, &argv);
 
-  if(rank == 0){
-    fillGrid(grid);
-    fillGrid(newgrid);
-    setupGrid(grid);
-    wprintf(L"[+] Grid ready!\n");
-  }
-
-
-  MPI_Barrier(MPI_COMM_WORLD);
-
-  wprintf(L"Thread Rank %d\n", rank);
-
-  // gettimeofday(&inicio_concorrente, NULL);
-  // int alive = runGeneration(grid, newgrid);
+  gettimeofday(&inicio_concorrente, NULL);
+  int alive = runGeneration(grid, newgrid);
   // gettimeofday(&final_concorrente, NULL);
 
   // if(rank == 0){
