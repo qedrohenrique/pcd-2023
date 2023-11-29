@@ -40,22 +40,24 @@ int main(int argc, char** argv){
 
   gettimeofday(&inicio_concorrente, NULL);
   int alive = runGeneration(grid, newgrid);
-  // gettimeofday(&final_concorrente, NULL);
+  gettimeofday(&final_concorrente, NULL);
 
-  // if(rank == 0){
-  //   gettimeofday(&final, NULL);
+  int rank;
+  MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+  if(rank == 0){
+    gettimeofday(&final, NULL);
 
-  //   tmili = (int)(1000 * (final.tv_sec - inicio.tv_sec)
-  //     + (final.tv_usec - inicio.tv_usec) / 1000);
+    tmili = (int)(1000 * (final.tv_sec - inicio.tv_sec)
+      + (final.tv_usec - inicio.tv_usec) / 1000);
 
-  //   tmili_concorrente = (int)
-  //     (1000 * (final_concorrente.tv_sec - inicio_concorrente.tv_sec)
-  //     + (final_concorrente.tv_usec - inicio_concorrente.tv_usec) / 1000);
+    tmili_concorrente = (int)
+      (1000 * (final_concorrente.tv_sec - inicio_concorrente.tv_sec)
+      + (final_concorrente.tv_usec - inicio_concorrente.tv_usec) / 1000);
 
-  //   wprintf(L"tempo decorrido: %d milisegundos\n", tmili);
-  //   wprintf(L"tempo trecho concorrente: %d milisegundos\n",
-  //   tmili_concorrente);
-  // }
+    wprintf(L"tempo decorrido: %d milisegundos\n", tmili);
+    wprintf(L"tempo trecho concorrente: %d milisegundos\n",
+    tmili_concorrente);
+  }
 
   int ierr = MPI_Finalize();
 
